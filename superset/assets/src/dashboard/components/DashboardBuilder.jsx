@@ -14,6 +14,7 @@ import DashboardGrid from '../containers/DashboardGrid';
 import IconButton from './IconButton';
 import DragDroppable from './dnd/DragDroppable';
 import DashboardComponent from '../containers/DashboardComponent';
+import Filter from './Filter'
 import ToastPresenter from '../../messageToasts/containers/ToastPresenter';
 import WithPopoverMenu from './menu/WithPopoverMenu';
 
@@ -127,6 +128,7 @@ class DashboardBuilder extends React.Component {
                       ]}
                       editMode={editMode}
                     >
+                      <Filter />
                       <DashboardComponent
                         id={topLevelTabs.id}
                         parentId={DASHBOARD_ROOT_ID}
