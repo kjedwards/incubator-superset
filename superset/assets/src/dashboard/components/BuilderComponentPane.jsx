@@ -11,6 +11,7 @@ import NewHeader from './gridComponents/new/NewHeader';
 import NewRow from './gridComponents/new/NewRow';
 import NewTabs from './gridComponents/new/NewTabs';
 import NewMarkdown from './gridComponents/new/NewMarkdown';
+import NewFilter from './gridComponents/new/NewFilter';
 import SliceAdder from '../containers/SliceAdder';
 import { t } from '../../locales';
 
@@ -88,6 +89,7 @@ class BuilderComponentPane extends React.PureComponent {
                           <i className="fa fa-arrow-right trigger" />
                         </div>
                         <NewTabs />
+                        <NewFilter />
                         <NewRow />
                         <NewColumn />
                         <NewHeader />

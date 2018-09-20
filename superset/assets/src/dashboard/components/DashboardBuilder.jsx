@@ -14,10 +14,8 @@ import DashboardGrid from '../containers/DashboardGrid';
 import IconButton from './IconButton';
 import DragDroppable from './dnd/DragDroppable';
 import DashboardComponent from '../containers/DashboardComponent';
-import Filter from './Filter'
 import ToastPresenter from '../../messageToasts/containers/ToastPresenter';
 import WithPopoverMenu from './menu/WithPopoverMenu';
-
 import getDragDropManager from '../util/getDragDropManager';
 
 import {
@@ -25,6 +23,11 @@ import {
   DASHBOARD_ROOT_ID,
   DASHBOARD_ROOT_DEPTH,
 } from '../util/constants';
+
+import {
+  TABS_TYPE,
+  FILTER_TYPE,
+} from '../util/componentTypes';
 
 const TABS_HEIGHT = 47;
 const HEADER_HEIGHT = 67;
@@ -85,14 +88,29 @@ class DashboardBuilder extends React.Component {
   }
 
   render() {
+    function findRootComponent(rootArray, type) {
+      let component = null;
+      rootArray.forEach(element => {
+        if (element.includes(type)) {
+          component = element;
+        }
+      });
+      return component;
+    }
+
     const { handleComponentDrop, dashboardLayout, editMode } = this.props;
     const { tabIndex } = this.state;
     const dashboardRoot = dashboardLayout[DASHBOARD_ROOT_ID];
     const rootChildId = dashboardRoot.children[0];
+    const tabChild = findRootComponent(dashboardRoot.children, TABS_TYPE);
+    const rootFilterId = findRootComponent(dashboardRoot.children, FILTER_TYPE);
     const topLevelTabs =
-      rootChildId !== DASHBOARD_GRID_ID && dashboardLayout[rootChildId];
+      rootChildId !== DASHBOARD_GRID_ID && dashboardLayout[tabChild];
+
+    console.log('dashboardRoot', dashboardRoot);
 
     const childIds = topLevelTabs ? topLevelTabs.children : [DASHBOARD_GRID_ID];
+    const filterComponent = rootFilterId ? dashboardLayout[rootFilterId] : null;
 
     return (
       <StickyContainer
@@ -109,13 +127,23 @@ class DashboardBuilder extends React.Component {
               onDrop={handleComponentDrop}
               editMode={editMode}
               // you cannot drop on/displace tabs if they already exist
-              disableDragdrop={!!topLevelTabs}
+              //disableDragdrop={!!topLevelTabs}
               style={{ zIndex: 100, ...style }}
             >
               {({ dropIndicatorProps }) => (
                 <div>
                   <DashboardHeader />
                   {dropIndicatorProps && <div {...dropIndicatorProps} />}
+                  {rootFilterId && (
+                    <DashboardComponent
+                      id={filterComponent.id}
+                      parentId={DASHBOARD_ROOT_ID}
+                      component={filterComponent}
+                      depth={DASHBOARD_ROOT_DEPTH + 1}
+                      index={0}
+                      renderHoverMenu={false}
+                    />
+                  )}
                   {topLevelTabs && (
                     <WithPopoverMenu
                       shouldFocus={DashboardBuilder.shouldFocusTabs}
@@ -128,7 +156,6 @@ class DashboardBuilder extends React.Component {
                       ]}
                       editMode={editMode}
                     >
-                      <Filter />
                       <DashboardComponent
                         id={topLevelTabs.id}
                         parentId={DASHBOARD_ROOT_ID}

@@ -9,6 +9,7 @@ import {
   ROW_TYPE,
   TABS_TYPE,
   TAB_TYPE,
+  FILTER_TYPE,
 } from './componentTypes';
 
 import {
@@ -33,6 +34,7 @@ const typeToDefaultMetaData = {
   [ROW_TYPE]: { background: BACKGROUND_TRANSPARENT },
   [TABS_TYPE]: null,
   [TAB_TYPE]: { text: 'New Tab' },
+  [FILTER_TYPE]: null,
 };
 
 function uuid(type) {

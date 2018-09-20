@@ -8,6 +8,7 @@ import {
   ROW_TYPE,
   COLUMN_TYPE,
   MARKDOWN_TYPE,
+  FILTER_TYPE,
 } from '../../../../src/dashboard/util/componentTypes';
 
 import {
@@ -29,6 +30,11 @@ export const dashboardLayout = {
       type: DASHBOARD_ROOT_TYPE,
       id: DASHBOARD_ROOT_ID,
       children: [DASHBOARD_GRID_ID],
+    },
+    FILTER_ID: {
+      id: 'FILTER_ID',
+      type: FILTER_TYPE,
+      meta: {},
     },
 
     [DASHBOARD_GRID_ID]: {
@@ -83,7 +89,13 @@ export const dashboardLayoutWithTabs = {
     [DASHBOARD_ROOT_ID]: {
       type: DASHBOARD_ROOT_TYPE,
       id: DASHBOARD_ROOT_ID,
-      children: ['TABS_ID'],
+      children: ['TABS_ID', 'FILTER_ID'],
+    },
+
+    FILTER_ID: {
+      id: 'FILTER_ID',
+      type: FILTER_TYPE,
+      meta: {},
     },
 
     TABS_ID: {

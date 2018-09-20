@@ -10,7 +10,12 @@ import newComponentFactory from '../util/newComponentFactory';
 import newEntitiesFromDrop from '../util/newEntitiesFromDrop';
 import reorderItem from '../util/dnd-reorder';
 import shouldWrapChildInRow from '../util/shouldWrapChildInRow';
-import { ROW_TYPE, TAB_TYPE, TABS_TYPE } from '../util/componentTypes';
+import {
+  ROW_TYPE,
+  TAB_TYPE,
+  TABS_TYPE,
+  FILTER_TYPE,
+} from '../util/componentTypes';
 
 import {
   UPDATE_COMPONENTS,
@@ -19,6 +24,8 @@ import {
   MOVE_COMPONENT,
   CREATE_TOP_LEVEL_TABS,
   DELETE_TOP_LEVEL_TABS,
+  CREATE_TOP_LEVEL_FILTER,
+  DELETE_TOP_LEVEL_FILTER,
 } from '../actions/dashboardLayout';
 
 const actionHandlers = {
@@ -184,6 +191,18 @@ const actionHandlers = {
       };
     }
 
+    let exists = false;
+    // If tabs component already exists, don't add another
+    rootComponent.children.forEach(element => {
+      if (element.includes(TABS_TYPE)) {
+        exists = true;
+      }
+    });
+
+    if (exists) {
+      return { ...state };
+    }
+
     // create new component
     const newEntities = newEntitiesFromDrop({ dropResult, layout: state });
     const newEntitiesArray = Object.values(newEntities);
@@ -198,7 +217,7 @@ const actionHandlers = {
     newEntities[topLevelId] = { ...topLevelComponent, children: [] };
     newEntities[DASHBOARD_ROOT_ID] = {
       ...rootComponent,
-      children: [tabsComponent.id],
+      children: [...rootComponent.children, tabsComponent.id],
     };
 
     return {
@@ -209,13 +228,22 @@ const actionHandlers = {
 
   [DELETE_TOP_LEVEL_TABS](state) {
     const rootComponent = state[DASHBOARD_ROOT_ID];
-    const topLevelId = rootComponent.children[0];
+
+    let topLevelId = null;
+    rootComponent.children.forEach(element => {
+      if (element.includes(TABS_TYPE)) {
+        topLevelId = element;
+      }
+    });
+
+    if (topLevelId === null) {
+      return state;
+    }
+
     const topLevelTabs = state[topLevelId];
 
-    if (topLevelTabs.type !== TABS_TYPE) return state;
-
     let childrenToMove = [];
-    const nextEntities = { ...state };
+    const nextEntities = state;
 
     topLevelTabs.children.forEach(tabId => {
       const tabComponent = state[tabId];
@@ -227,13 +255,82 @@ const actionHandlers = {
 
     nextEntities[DASHBOARD_ROOT_ID] = {
       ...rootComponent,
-      children: [DASHBOARD_GRID_ID],
+      children: [...rootComponent.children, DASHBOARD_GRID_ID],
     };
 
     nextEntities[DASHBOARD_GRID_ID] = {
       ...state[DASHBOARD_GRID_ID],
       children: childrenToMove,
     };
+
+    return nextEntities;
+  },
+
+  [CREATE_TOP_LEVEL_FILTER](state, action) {
+    const {
+      payload: { dropResult },
+    } = action;
+    const { source, dragging } = dropResult;
+
+    const rootComponent = state[DASHBOARD_ROOT_ID];
+
+    if (source.id !== NEW_COMPONENTS_SOURCE_ID) {
+      return {
+        ...state,
+        [DASHBOARD_ROOT_ID]: {
+          ...rootComponent,
+          children: [dragging.id],
+        },
+      };
+    }
+
+    let exists = false;
+    // If top level filter component already exists, don't add another
+    rootComponent.children.forEach(element => {
+      if (element.includes(FILTER_TYPE)) {
+        exists = true;
+      }
+    });
+
+    if (exists) {
+      return state;
+    }
+
+    // create new component
+    const newEntities = newEntitiesFromDrop({ dropResult, layout: state });
+    const newEntitiesArray = Object.values(newEntities);
+    const filterComponent = newEntitiesArray.find(
+      component => component.type === FILTER_TYPE,
+    );
+
+    newEntities[DASHBOARD_ROOT_ID] = {
+      ...rootComponent,
+      children: [...rootComponent.children, filterComponent.id],
+    };
+
+    return {
+      ...state,
+      ...newEntities,
+    };
+  },
+
+  [DELETE_TOP_LEVEL_FILTER](state) {
+    const rootComponent = state[DASHBOARD_ROOT_ID];
+
+    let topLevelFilterId = null;
+    rootComponent.children.forEach(element => {
+      if (element.includes(FILTER_TYPE)) {
+        topLevelFilterId = element;
+      }
+    });
+
+    if (topLevelFilterId === null) {
+      return state;
+    }
+
+    const nextEntities = { ...state };
+
+    delete nextEntities[topLevelFilterId];
 
     return nextEntities;
   },

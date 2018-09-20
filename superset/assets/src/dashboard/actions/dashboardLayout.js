@@ -2,7 +2,7 @@ import { ActionCreators as UndoActionCreators } from 'redux-undo';
 
 import { addInfoToast } from '../../messageToasts/actions';
 import { setUnsavedChanges } from './dashboardState';
-import { TABS_TYPE, ROW_TYPE } from '../util/componentTypes';
+import { TABS_TYPE, ROW_TYPE, FILTER_TYPE } from '../util/componentTypes';
 import {
   DASHBOARD_ROOT_ID,
   NEW_COMPONENTS_SOURCE_ID,
@@ -74,6 +74,23 @@ export const createComponent = setUnsavedChangesAfterAction(dropResult => ({
   },
 }));
 
+// Filter ---------------------------------------------------------------------
+export const CREATE_TOP_LEVEL_FILTER = 'CREATE_TOP_LEVEL_FILTER';
+export const createTopLevelFilter = setUnsavedChangesAfterAction(
+  dropResult => ({
+    type: CREATE_TOP_LEVEL_FILTER,
+    payload: {
+      dropResult,
+    },
+  }),
+);
+
+export const DELETE_TOP_LEVEL_FILTER = 'DELETE_TOP_LEVEL_FILTER';
+export const deleteTopLevelFilter = setUnsavedChangesAfterAction(() => ({
+  type: DELETE_TOP_LEVEL_FILTER,
+  payload: {},
+}));
+
 // Tabs -----------------------------------------------------------------------
 export const CREATE_TOP_LEVEL_TABS = 'CREATE_TOP_LEVEL_TABS';
 export const createTopLevelTabs = setUnsavedChangesAfterAction(dropResult => ({
@@ -127,6 +144,7 @@ const moveComponent = setUnsavedChangesAfterAction(dropResult => ({
 
 export const HANDLE_COMPONENT_DROP = 'HANDLE_COMPONENT_DROP';
 export function handleComponentDrop(dropResult) {
+  console.log(dropResult);
   return (dispatch, getState) => {
     const overflowsParent = dropOverflowsParent(
       dropResult,
@@ -146,7 +164,11 @@ export function handleComponentDrop(dropResult) {
     const isNewComponent = source.id === NEW_COMPONENTS_SOURCE_ID;
 
     if (droppedOnRoot) {
-      dispatch(createTopLevelTabs(dropResult));
+      if (dropResult.dragging.type === TABS_TYPE) {
+        dispatch(createTopLevelTabs(dropResult));
+      } else if (dropResult.dragging.type === FILTER_TYPE) {
+        dispatch(createTopLevelFilter(dropResult));
+      }
     } else if (destination && isNewComponent) {
       dispatch(createComponent(dropResult));
     } else if (

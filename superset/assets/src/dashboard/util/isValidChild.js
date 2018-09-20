@@ -25,6 +25,7 @@ import {
   ROW_TYPE,
   TABS_TYPE,
   TAB_TYPE,
+  FILTER_TYPE,
 } from './componentTypes';
 
 import { DASHBOARD_ROOT_DEPTH as rootDepth } from './constants';
@@ -39,6 +40,7 @@ const depthFive = rootDepth + 5;
 const parentMaxDepthLookup = {
   [DASHBOARD_ROOT_TYPE]: {
     [TABS_TYPE]: rootDepth,
+    [FILTER_TYPE]: rootDepth,
     [DASHBOARD_GRID_TYPE]: rootDepth,
   },
 
@@ -50,6 +52,7 @@ const parentMaxDepthLookup = {
     [HEADER_TYPE]: depthOne,
     [ROW_TYPE]: depthOne,
     [TABS_TYPE]: depthOne,
+    [FILTER_TYPE]: depthOne,
   },
 
   [ROW_TYPE]: {
@@ -70,6 +73,7 @@ const parentMaxDepthLookup = {
     [HEADER_TYPE]: depthTwo,
     [ROW_TYPE]: depthTwo,
     [TABS_TYPE]: depthTwo,
+    [FILTER_TYPE]: depthTwo,
   },
 
   [COLUMN_TYPE]: {
@@ -85,6 +89,7 @@ const parentMaxDepthLookup = {
   [DIVIDER_TYPE]: {},
   [HEADER_TYPE]: {},
   [MARKDOWN_TYPE]: {},
+  [FILTER_TYPE]: {},
 };
 
 export default function isValidChild({ parentType, childType, parentDepth }) {
