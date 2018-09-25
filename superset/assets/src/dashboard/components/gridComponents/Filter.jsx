@@ -99,7 +99,7 @@ class Filter extends React.PureComponent {
             <WithPopoverMenu
               onChangeFocus={this.handleChangeFocus}
               menuItems={[
-                <DeleteComponentButton style={{zIndex: 1}} onDelete={this.handleDeleteComponent} />,
+                <DeleteComponentButton onDelete={this.handleDeleteComponent} />,
               ]}
               editMode={editMode}
             >
