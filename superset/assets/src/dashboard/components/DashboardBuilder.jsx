@@ -107,8 +107,6 @@ class DashboardBuilder extends React.Component {
     const topLevelTabs =
       rootChildId !== DASHBOARD_GRID_ID && dashboardLayout[tabChild];
 
-    console.log('dashboardRoot', dashboardRoot);
-
     const childIds = topLevelTabs ? topLevelTabs.children : [DASHBOARD_GRID_ID];
     const filterComponent = rootFilterId ? dashboardLayout[rootFilterId] : null;
 

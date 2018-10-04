@@ -38,7 +38,8 @@ class Filter extends React.PureComponent {
       isFocused: false,
     };
     this.handleClick = this.handleClick.bind(this);
-    this.handleDeleteComponent = this.handleClick.bind(this);
+    this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
+    this.handleChangeFocus = this.handleChangeFocus.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
   }
 
@@ -47,7 +48,6 @@ class Filter extends React.PureComponent {
   }
 
   handleClick() {
-    console.log("onClick");
     if (this.state.openFilter) {
       this.setState({ openFilter: false });
     } else {
@@ -56,9 +56,12 @@ class Filter extends React.PureComponent {
   }
 
   handleDeleteComponent() {
-    console.log("delete");
     const { deleteComponent, id, parentId } = this.props;
     deleteComponent(id, parentId);
+  }
+
+  handleChangeFocus(nextFocus) {
+    this.setState(() => ({ isFocused: Boolean(nextFocus) }));
   }
 
   render() {
@@ -91,18 +94,25 @@ class Filter extends React.PureComponent {
           <div ref={dragSourceRef}>
             {editMode &&
             depth <= 2 && ( // drag handle looks bad when nested
-                <HoverMenu position="top">
-                  <DragHandle position="top" />
+                <HoverMenu position="left">
+                  <DragHandle position="left" />
                 </HoverMenu>
               )}
 
             <WithPopoverMenu
+              isFocused={this.state.isFocused}
               onChangeFocus={this.handleChangeFocus}
-              menuItems={[
-                <DeleteComponentButton onDelete={this.handleDeleteComponent} />,
-              ]}
+              disableClick
               editMode={editMode}
             >
+              {editMode && (
+                <HoverMenu innerRef={dragSourceRef} position="top">
+                  <DragHandle position="left" />
+                  <DeleteComponentButton
+                    onDelete={this.handleDeleteComponent}
+                  />
+                </HoverMenu>
+              )}
               <div className={cx('dashboard-component')}>
                 <div className="filter-container">
                   <div className="filter-title">

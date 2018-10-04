@@ -144,7 +144,6 @@ const moveComponent = setUnsavedChangesAfterAction(dropResult => ({
 
 export const HANDLE_COMPONENT_DROP = 'HANDLE_COMPONENT_DROP';
 export function handleComponentDrop(dropResult) {
-  console.log(dropResult);
   return (dispatch, getState) => {
     const overflowsParent = dropOverflowsParent(
       dropResult,
