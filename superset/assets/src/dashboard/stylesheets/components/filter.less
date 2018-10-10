@@ -41,3 +41,51 @@
     }
   }
 }
+
+
+@config-column-width: 275px;
+@config-container-padding: 10px 0;
+@config-item-padding: 0 10px;
+
+.config-modal {
+
+  & .select-container {
+    padding: @config-container-padding;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    & .select-item {
+      display: flex;
+      flex-direction: column;
+      width: @config-column-width;
+      padding: @config-item-padding;
+    }
+  }
+
+  & .date-filter-control-container {
+    padding: @config-container-padding;
+
+    & span {
+      margin: @config-item-padding;
+    }
+  }
+
+  & .checkbox-container {
+    padding: @config-container-padding;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    & .checkbox-item {
+      display: flex;
+      flex-direction: row;
+      width: @config-column-width;
+      padding: @config-item-padding;
+
+      & input {
+        margin-right: 10px;
+      }
+    }
+  }
+}
